@@ -1,0 +1,32 @@
+name: 'Hello World'
+description: 'Greet someone'
+inputs:
+  sources:
+    description: 'One or more directories / files to upload '
+    required: true
+    default: '.'
+  artifacts_url:
+    description: 'artifacts url'
+    required: true
+  username:
+    description: 'artifacts username'
+    required: false
+  password:
+    description: 'artifacts password'
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: add args if command is exec on alpine
+      shell: bash
+      run : |
+        if [ $(cat /etc/*-release | grep alpine | wc -l) -ne 0 ]; then
+                export XARG_ARGS = " -P 16"
+        fi
+    - id: directory-path
+      shell: bash
+      run: echo "::set-output name=url::github:scality:action-artifacs-upload:dev-staging-1.0.0.0.r210721133720.d674663359.pre-merge.00118602"
+    - name: push artifacts to server
+      shell: bash
+      run: |
+        find -L ${{ inputs.sources }} -type f -print0 | sed -e "s:\\(^\\|\\x0\\)\\./:\\1:g" | xargs -0 -n 1 -t $XARG_ARGS -I @ sh -c 'curl -u ${{ inputs.username }}:${{ inputs.password }} --silent --fail --show-error --max-time 3600 -T "@" "${{ inputs.artifacts_url }}/upload/${{ steps.directory-path.outputs.url }}/"$(echo "@" | sed -e "s: :%20:g")'
