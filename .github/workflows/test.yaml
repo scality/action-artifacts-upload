@@ -2,12 +2,12 @@ on: [push]
 name: Test action
 
 jobs:
-  hello_world_job:
+  push_artifacts_action:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: A job that push file on artifacts
     steps:
       - uses: actions/checkout@v1
-      - id: foo
+      - id: Test action
         uses: scality/action-artifacts-upload@v0.2.0
         with:
           artifacts_url: https://artifacts-devl.scality.net
