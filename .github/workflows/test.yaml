@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - id: foo
-        uses: scality/action-artifacts-upload@v0.1.2
+        uses: scality/action-artifacts-upload@v0.2.0
         with:
           artifacts_url: https://artifacts-devl.scality.net
           username: ${{ secrets.ARTIFACTS_USER }}
