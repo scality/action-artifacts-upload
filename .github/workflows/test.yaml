@@ -7,7 +7,7 @@ jobs:
     name: A job that push file on artifacts
     steps:
       - uses: actions/checkout@v1
-      - id: Test action
+      - id: Test-action
         uses: scality/action-artifacts-upload@v0.2.0
         with:
           artifacts_url: https://artifacts-devl.scality.net
