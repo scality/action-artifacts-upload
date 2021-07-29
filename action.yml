@@ -17,11 +17,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: add args if command is exec on alpine
+    - id: additional-xargs-args
       shell: bash
       run : |
-        if [ $(cat /etc/*-release | grep alpine | wc -l) -ne 0 ]; then
-                export XARG_ARGS = " -P 16"
+        if [ $(cat /etc/*-release | grep alpine | wc -l) -eq 0 ]; then
+                echo "::set-output name=args::'-P 16'"
         fi
     - id: directory-path
       shell: bash
@@ -31,6 +31,6 @@ runs:
       run: |
         find -L ${{ inputs.sources }} -type f -print0 | \
           sed -e "s:\\(^\\|\\x0\\)\\./:\\1:g" | \
-          xargs -0 -n 1 -t $XARG_ARGS -I @ sh -c \
+          xargs -0 -n 1 -t ${{ steps.additional-xargs-args.outputs.args }} -I @ sh -c \
           'curl -u ${{ inputs.username }}:${{ inputs.password }} --silent --fail --show-error --max-time 3600 -T "@" \
           "${{ inputs.artifacts_url }}/upload/${{ steps.directory-path.outputs.url }}/"$(echo "@" | sed -e "s: :%20:g")'
